@@ -1,8 +1,8 @@
 module ConverseWithMe
   module ViewHelpers
 
-    def include_converse_with_me
-      puts "I was called"
+    def include_converse_with_me(user_id, user_nick, user_xmpp_password, room_id)
+      ConverseWithMe::Base.converse_with_me(user_id, user_nick, user_xmpp_password, room_id)
     end
 
   end

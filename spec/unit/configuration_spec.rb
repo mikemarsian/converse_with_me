@@ -33,4 +33,18 @@ describe ConverseWithMe::Configuration do
       end
     end
   end
+  describe "#logger" do
+    it "should return a Logger object" do
+      logger = ConverseWithMe.logger
+
+      expect(logger).to be_a(Logger)
+    end
+
+    it "should allow assigning custom logger" do
+      logger = Logger.new(STDOUT)
+      ConverseWithMe.logger = logger
+
+      expect(ConverseWithMe.logger).to eq(logger)
+    end
+  end
 end

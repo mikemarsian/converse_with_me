@@ -24,10 +24,15 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.2"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "webmock"
   #spec.add_development_dependency 'database_cleaner'
 
-  spec.add_dependency "actionview", ">= 3.1"
-  #spec.add_dependency "gon", "~> 6.0"
+  spec.add_dependency 'activesupport', '~> 4'
+  spec.add_dependency 'actionpack', '~> 4'
+  spec.add_dependency "xmpp4r", "~> 0.5"
+  spec.add_dependency "mikemarsian-ruby_bosh", "~> 0.13"
+  spec.add_dependency "conversejs-rails"
+  spec.add_dependency "gon", "~> 6.0"
 
   spec.description   = <<desc
 Add description here

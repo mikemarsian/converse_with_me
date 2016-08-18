@@ -1,6 +1,16 @@
 module ConverseWithMe
   class << self
     attr_writer :configuration
+    attr_writer :logger
+
+    def logger
+      log_dir = './log'
+      Dir.mkdir(log_dir) unless File.exists?(log_dir)
+
+      @logger ||= Logger.new('./log/converse_with_me.log').tap do |log|
+        log.progname = self.name
+      end
+    end
   end
 
   def self.configuration
