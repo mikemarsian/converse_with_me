@@ -17,17 +17,28 @@ describe ConverseWithMe::Main do
           expect(ConverseWithMe::XmppChat).to receive(:register_user).with("user_16@localhost", "sdgSdge45")
           ConverseWithMe::Main.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
         end
+        it "should raise ConnectionError when XMPP server is down" do
+          expect { ConverseWithMe::Main.converse_with_me(user_uid,
+                             user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::ConnectionError)
+        end
       end
 
       context "prebinding" do
         before do
           allow(ConverseWithMe::XmppChat).to receive(:register_user) {}
+          # stub Bosh server to return 500 status
+          stub_request(:post, "http://localhost:5280/http-bind").to_return(status: 500)
         end
         it "should call get_prebind_url_tokens with correct params" do
           expect(ConverseWithMe::XmppChat).to receive(:get_prebind_url_tokens).with("http://localhost:5280/http-bind",
                                                                                     "user_16@localhost",
                                                                                     "sdgSdge45")
           ConverseWithMe::Main.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
+        end
+
+        it "should raise ConnectionError when Bosh server is down" do
+          expect { ConverseWithMe::Main.converse_with_me(user_uid,
+                                                         user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::ConnectionError)
         end
 
         context "with configuration" do

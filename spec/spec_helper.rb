@@ -5,6 +5,9 @@ require 'pry'
 require 'webmock/rspec'
 require 'converse_with_me'
 
+WebMock.disable_net_connect!(allow_localhost: false)
+
+
 RSpec.configure do |config|
 
   config.filter_run :focus
@@ -14,7 +17,5 @@ RSpec.configure do |config|
 
 end
 
-# include template files
-Dir[File.dirname(__FILE__) + "/templates/*.erb"].sort.each { |f| require File.expand_path(f) }
 
 # **** add helper methods here ***

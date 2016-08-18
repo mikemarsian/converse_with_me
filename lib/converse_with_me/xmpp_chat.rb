@@ -15,8 +15,8 @@ module ConverseWithMe
       ConverseWithMe.logger.info("BOSH/XMPP: returned jabber_id: #{jabber_id}, session_id: #{session_id}, random_id: #{random_id}")
 
       {"jid" => "#{jabber_id}", "sid" => "#{session_id}", "rid" => "#{random_id}" }
-    rescue RubyBOSH::AuthFailed => exc
-      msg = "BOSH/XMPP Error: couldn't initialize BOSH session for #{user_jid} on #{bosh_service_url}. #{exc.message}"
+    rescue RubyBOSH::Error => exc
+      msg = "Couldn't initialize BOSH session for #{user_jid} on #{bosh_service_url}. #{exc.message}"
       ConverseWithMe.logger.error(msg)
       raise ConnectionError.new(msg)
     end
@@ -26,11 +26,15 @@ module ConverseWithMe
     # @return [Jabber::Client] client object, that can be used to manage XMPP connection
     def self.register_user(user_jid, user_password)
       client = connect_client(user_jid)
-      ConverseWithMe.logger.info("BOSH/XMPP: registering user #{user_jid} ...")
       begin
-        client.register(user_password)
+        ConverseWithMe.logger.info("BOSH/XMPP: registering user #{user_jid} ...")
+        client.register(user_password) if client
       rescue Jabber::ClientAuthenticationFailure, Jabber::ServerError => exc
-        ConverseWithMe.logger.warn("BOSH/XMPP: couldn't register #{user_jid} on the server, probably already registered. #{exc.message}")
+        ConverseWithMe.logger.warn("Couldn't register #{user_jid} on the XMPP server, probably already registered (so all good). #{exc.message}")
+      rescue StandardError => exc
+        msg = "Couldn't connect to XMPP server, while trying to register #{user_jid}. #{exc.message}"
+        ConverseWithMe.logger.error(msg)
+        raise ConnectionError.new(msg)
       end
 
       client
@@ -40,12 +44,16 @@ module ConverseWithMe
 
     def self.connect_client(user_jid)
       client = Jabber::Client.new(Jabber::JID.new(user_jid))
-      client.connect
+      begin
+        client.connect
+
+      # we have to rescue StandardError, because Net:HTTP can throw many different errors
+      rescue StandardError => exc
+        msg = "Couldn't connect to XMPP server. #{exc.message}"
+        ConverseWithMe.logger.error(msg)
+        #raise ConnectionError.new(msg)
+      end
       client
-    rescue Jabber::ClientAuthenticationFailure, Jabber::ServerError => exc
-      msg = "BOSH/XMPP Error: couldn't connect to server. #{exc.message}"
-      ConverseWithMe.logger.error(msg)
-      raise ConnectionError.new(msg)
     end
   end
 end
