@@ -7,7 +7,7 @@ describe ConverseWithMe::Configuration do
       it "should be set correctly" do
         config = ConverseWithMe.configuration
         expect(config.xmpp_server).to eq("localhost")
-        expect(config.xmpp_server_port).to eq("5280")
+        expect(config.bosh_service_url).to be nil
         expect(config.use_https).to be false
       end
     end
@@ -29,6 +29,17 @@ describe ConverseWithMe::Configuration do
           end
 
           expect(ConverseWithMe.configuration.xmpp_server_port).to eq("6666")
+        end
+      end
+
+      context "bosh_service_url" do
+        let(:bosh_url) { "http://example.com:5281/http-bind" }
+        it "should work" do
+          ConverseWithMe.configure do |config|
+            config.bosh_service_url = bosh_url
+          end
+
+          expect(ConverseWithMe.configuration.bosh_service_url).to eq(bosh_url)
         end
       end
     end

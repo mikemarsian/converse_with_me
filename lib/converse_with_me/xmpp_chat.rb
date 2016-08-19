@@ -28,11 +28,11 @@ module ConverseWithMe
       client = connect_client(user_jid)
       begin
         ConverseWithMe.logger.info("BOSH/XMPP: registering user #{user_jid} ...")
-        client.register(user_password) if client
+        client.register(user_password)
       rescue Jabber::ClientAuthenticationFailure, Jabber::ServerError => exc
         ConverseWithMe.logger.warn("Couldn't register #{user_jid} on the XMPP server, probably already registered (so all good). #{exc.message}")
       rescue StandardError => exc
-        msg = "Couldn't connect to XMPP server, while trying to register #{user_jid}. #{exc.message}"
+        msg = "Couldn't connect to XMPP server, while trying to register #{user_jid}. #{exc.message} #{exc.backtrace}"
         ConverseWithMe.logger.error(msg)
         raise ConnectionError.new(msg)
       end
@@ -45,8 +45,8 @@ module ConverseWithMe
     def self.connect_client(user_jid)
       client = Jabber::Client.new(Jabber::JID.new(user_jid))
       begin
-        client.connect
-
+        config = ConverseWithMe.configuration
+        client.connect(config.xmpp_server, config.xmpp_server_port)
       # we have to rescue StandardError, because Net:HTTP can throw many different errors
       rescue StandardError => exc
         msg = "Couldn't connect to XMPP server. #{exc.message}"

@@ -26,13 +26,14 @@ module ConverseWithMe
   end
 
   class Configuration
-    attr_accessor :xmpp_server, :xmpp_server_port, :use_https
+    attr_accessor :xmpp_server, :xmpp_server_port, :use_https, :bosh_service_url
 
     def initialize
       # set default values
       @xmpp_server = 'localhost'
-      @xmpp_server_port = '5280'
+      @xmpp_server_port = '5222'
       @use_https = false
+      @bosh_service_url = nil
     end
   end
 end

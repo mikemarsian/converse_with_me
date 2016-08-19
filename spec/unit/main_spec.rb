@@ -9,6 +9,20 @@ describe ConverseWithMe::Main do
   describe "#converse_with_me" do
     context "valid params" do
 
+      context "connecting to XMPP server" do
+        context "using custom params" do
+          it "should work" do
+            expect_any_instance_of(Jabber::Client).to receive(:connect).with("localhost", "5244")
+            ConverseWithMe.configure do |c|
+              c.xmpp_server_port = "5244"
+            end
+
+            expect { ConverseWithMe::Main.converse_with_me(user_uid,
+                                      user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::ConnectionError)
+          end
+        end
+      end
+
       context "registering user" do
         before do
           allow(ConverseWithMe::XmppChat).to receive(:get_prebind_url_tokens) { {"jid" => "4353", "sid" => "3453", "rid" => "432563" } }
@@ -43,14 +57,13 @@ describe ConverseWithMe::Main do
 
         context "with configuration" do
           it "should call get_prebind_url_tokens with params given in configuration" do
-            expect(ConverseWithMe::XmppChat).to receive(:get_prebind_url_tokens).with("https://example.com:5283/http-bind",
+            expect(ConverseWithMe::XmppChat).to receive(:get_prebind_url_tokens).with("https://example.com:5280/http-bind",
                                                                                       "user_16@example.com",
                                                                                       "sdgSdge45")
 
             ConverseWithMe.configure do |config|
               config.xmpp_server = "example.com"
               config.use_https = true
-              config.xmpp_server_port = 5283
             end
             ConverseWithMe::Main.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
           end

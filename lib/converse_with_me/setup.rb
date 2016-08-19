@@ -13,8 +13,12 @@ module ConverseWithMe
     private
 
     def set_bosh_service_url
-      protocol = @config.use_https ? 'https' : 'http'
-      @bosh_service_url = "#{protocol}://#{@config.xmpp_server}:#{@config.xmpp_server_port}/http-bind"
+      if @config.bosh_service_url.blank?
+        protocol = @config.use_https ? 'https' : 'http'
+        @bosh_service_url = "#{protocol}://#{@config.xmpp_server}:5280/http-bind"
+      else
+        @bosh_service_url = @config.bosh_service_url
+      end
     end
 
     def set_user_jid(user_id)
