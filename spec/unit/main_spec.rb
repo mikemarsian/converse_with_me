@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe ConverseWithMe::Main do
+describe ConverseWithMe do
   let(:user_uid) { 16 }
   let(:user_nick) { "John" }
   let(:user_xmpp_password) { "sdgSdge45" }
@@ -17,7 +17,7 @@ describe ConverseWithMe::Main do
               c.xmpp_server_port = "5244"
             end
 
-            expect { ConverseWithMe::Main.converse_with_me(user_uid,
+            expect { ConverseWithMe.converse_with_me(user_uid,
                                       user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::ConnectionError)
           end
         end
@@ -29,10 +29,10 @@ describe ConverseWithMe::Main do
         end
         it "should call register_user with correct params" do
           expect(ConverseWithMe::XmppChat).to receive(:register_user).with("user_16@localhost", "sdgSdge45")
-          ConverseWithMe::Main.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
+          ConverseWithMe.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
         end
         it "should raise ConnectionError when XMPP server is down" do
-          expect { ConverseWithMe::Main.converse_with_me(user_uid,
+          expect { ConverseWithMe.converse_with_me(user_uid,
                              user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::ConnectionError)
         end
       end
@@ -47,11 +47,11 @@ describe ConverseWithMe::Main do
           expect(ConverseWithMe::XmppChat).to receive(:get_prebind_url_tokens).with("http://localhost:5280/http-bind",
                                                                                     "user_16@localhost",
                                                                                     "sdgSdge45")
-          ConverseWithMe::Main.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
+          ConverseWithMe.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
         end
 
         it "should raise ConnectionError when Bosh server is down" do
-          expect { ConverseWithMe::Main.converse_with_me(user_uid,
+          expect { ConverseWithMe.converse_with_me(user_uid,
                                                          user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::ConnectionError)
         end
 
@@ -65,7 +65,7 @@ describe ConverseWithMe::Main do
               config.xmpp_server = "example.com"
               config.use_https = true
             end
-            ConverseWithMe::Main.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
+            ConverseWithMe.converse_with_me(user_uid, user_nick, user_xmpp_password, room_uid)
           end
         end
       end
@@ -73,9 +73,9 @@ describe ConverseWithMe::Main do
 
     context "invalid params" do
       it "throws InvalidArgs" do
-        expect { ConverseWithMe::Main.converse_with_me(nil, user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::InvalidArgs)
-        expect { ConverseWithMe::Main.converse_with_me(user_uid, "", user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::InvalidArgs)
-        expect { ConverseWithMe::Main.converse_with_me(user_uid, user_nick, "", room_uid) }.to raise_error(ConverseWithMe::InvalidArgs)
+        expect { ConverseWithMe.converse_with_me(nil, user_nick, user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::InvalidArgs)
+        expect { ConverseWithMe.converse_with_me(user_uid, "", user_xmpp_password, room_uid) }.to raise_error(ConverseWithMe::InvalidArgs)
+        expect { ConverseWithMe.converse_with_me(user_uid, user_nick, "", room_uid) }.to raise_error(ConverseWithMe::InvalidArgs)
       end
     end
   end
