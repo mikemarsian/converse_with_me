@@ -1,6 +1,9 @@
 require "spec_helper"
 
 describe ConverseWithMe::Configuration do
+  before(:each) do
+    ConverseWithMe.reset_configuration
+  end
   describe "#configure" do
 
     context "initial values" do

@@ -21,7 +21,7 @@ module ConverseWithMe
     yield(configuration)
   end
 
-  def self.reset
+  def self.reset_configuration
     @configuration = Configuration.new
   end
 

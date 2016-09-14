@@ -7,6 +7,9 @@ describe ConverseWithMe do
   let(:room_uid) { 1456 }
 
   describe "#converse_with_me" do
+    before(:each) do
+      ConverseWithMe.reset_configuration
+    end
     context "valid params" do
 
       context "connecting to XMPP server" do
